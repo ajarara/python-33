@@ -26,3 +26,12 @@ def strong_decompose(n, partitions):
                 if hd >= tl.val:
                     yield Node(hd, tl)
 
+
+def weak_decompose(n, partitions):
+    if partitions == 1:
+        yield Node(n)
+    else:
+        for hd in reversed(range(n + 1)):
+            for tl in weak_decompose(n - hd, partitions - 1):
+                if hd >= tl.val:
+                    yield Node(hd, tl)
