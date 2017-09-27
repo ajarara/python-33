@@ -11,6 +11,23 @@ def test_strong_simple(n):
     for decomp in decomps:
         assert sum(decomp) == n
 
-@given(integers(), integers())
-def test_multi_part(n, partitions):
-    
+
+# idk how to enforce assumptions. don't make n too big or you'll
+@given(integers(min_value=11, max_value=75),
+       integers(min_value=1, max_value=10))
+def test_strong(n, partitions):
+    for decomp in start.strong_decompose(n, partitions):
+        dec = tuple(decomp)
+        assert tuple(reversed(sorted(dec))) == dec
+        assert sum(dec) == n
+        assert len(dec) == partitions
+
+
+def test_strong_uses_same_ref():
+    a = start.strong_decompose(9, 3)
+    b = start.strong_decompose(6, 2)
+
+    last_a = a[len(a) - 1]
+    last_b = b[len(b) - 1]
+
+    assert last_a.link is last_b
