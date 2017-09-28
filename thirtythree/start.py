@@ -13,13 +13,11 @@ class Node(object):
         while here is not None:
             yield here.val
             here = here.link
-        raise StopIteration
 
 
 def memoize(fun):
-    cache = {}
 
-    def memoized_fun(*args):
+    def memoized_fun(*args, cache={}):
         if args not in cache:
             cache[args] = tuple(fun(*args))
         return cache[args]
@@ -50,11 +48,15 @@ def weak_decompose(n, partitions):
 
 
 def factorial(n):
-    def fact_help(n, running):
-        if n == 1:
-            return running
-        return fact_help(n - 1, running * n)
-    return fact_help(n, 1)
+    assert isinstance(n, int)
+    assert n >= 0
+    
+    running = 1
+    while n > 1:
+        running *= n
+        n -= 1
+    return running
+
 
 
 def permutations(n, r):
