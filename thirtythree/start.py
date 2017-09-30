@@ -14,6 +14,7 @@ class Node(object):
             yield here.val
             here = here.link
 
+
 def memoize(fun):
     cache = {}
 
@@ -23,18 +24,24 @@ def memoize(fun):
         return cache[args]
     return memoized_fun
 
-
 @memoize
-def decompose(n, partitions, strong=False):
+def strong_decompose(n, partitions):
     if partitions == 1:
         yield Node(n)
     else:
-        if strong:
-            bounds = (1, n - partitions + 2)
-        else:
-            bounds = (n + 1)
-        for hd in reversed(range(*bounds)):
-            for tl in decompose(n - hd, partitions - 1, strong=strong):
+        for hd in reversed(range(1, n - partitions + 2)):
+            for tl in decompose(n - hd, partitions - 1):
+                if hd >= tl.val:
+                    yield Node(hd, tl)
+
+
+@memoize
+def weak_decompose(n, partitions):
+    if partitions == 1:
+        yield Node(n)
+    else:
+        for hd in reversed(range(n + 1)):
+            for tl in decompose(n - hd, partitions - 1):
                 if hd >= tl.val:
                     yield Node(hd, tl)
 
@@ -48,7 +55,6 @@ def factorial(n):
         running *= n
         n -= 1
     return running
-
 
 
 def permutations(n, r):
