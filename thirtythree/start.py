@@ -14,35 +14,27 @@ class Node(object):
             yield here.val
             here = here.link
 
-
 def memoize(fun):
+    cache = {}
 
-    def memoized_fun(*args, cache={}):
+    def memoized_fun(*args, **kwargs):
         if args not in cache:
-            cache[args] = tuple(fun(*args))
+            cache[args] = tuple(fun(*args, **kwargs))
         return cache[args]
     return memoized_fun
 
 
 @memoize
-def strong_decompose(n, partitions):
+def decompose(n, partitions, strong=False):
     if partitions == 1:
         yield Node(n)
     else:
-        for hd in reversed(range(1, n - partitions + 2)):
-            for tl in strong_decompose(n - hd, partitions - 1):
-                # eh... good enough.
-                if hd >= tl.val:
-                    yield Node(hd, tl)
-
-
-@memoize
-def weak_decompose(n, partitions):
-    if partitions == 1:
-        yield Node(n)
-    else:
-        for hd in reversed(range(n + 1)):
-            for tl in weak_decompose(n - hd, partitions - 1):
+        if strong:
+            bounds = (1, n - partitions + 2)
+        else:
+            bounds = (n + 1)
+        for hd in reversed(range(*bounds)):
+            for tl in decompose(n - hd, partitions - 1, strong=strong):
                 if hd >= tl.val:
                     yield Node(hd, tl)
 
@@ -50,7 +42,7 @@ def weak_decompose(n, partitions):
 def factorial(n):
     assert isinstance(n, int)
     assert n >= 0
-    
+
     running = 1
     while n > 1:
         running *= n
