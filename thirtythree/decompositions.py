@@ -47,23 +47,6 @@ def weak_decompose(n, partitions):
                     yield Node(hd, tl)
 
 
-def strong_decompose_2(n, partitions, cache={}):
-    args = (n, partitions)
-    if args not in cache:
-        cache[args] = tuple(strong_decompose_2_helper(*args))
-    return cache[args]
-
-
-def strong_decompose_2_helper(n, partitions):
-    if partitions == 1:
-        yield Node(n)
-    else:
-        for hd in reversed(range(1, n - partitions + 2)):
-            for tl in strong_decompose_2(n - hd, partitions - 1):
-                if hd >= tl.val:
-                    yield Node(hd, tl)
-
-
 def factorial(n):
     assert isinstance(n, int)
     assert n >= 0
