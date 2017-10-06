@@ -24,13 +24,14 @@ def memoize(fun):
         return cache[args]
     return memoized_fun
 
+
 @memoize
 def strong_decompose(n, partitions):
     if partitions == 1:
         yield Node(n)
     else:
         for hd in reversed(range(1, n - partitions + 2)):
-            for tl in decompose(n - hd, partitions - 1):
+            for tl in strong_decompose(n - hd, partitions - 1):
                 if hd >= tl.val:
                     yield Node(hd, tl)
 
@@ -41,7 +42,24 @@ def weak_decompose(n, partitions):
         yield Node(n)
     else:
         for hd in reversed(range(n + 1)):
-            for tl in decompose(n - hd, partitions - 1):
+            for tl in weak_decompose(n - hd, partitions - 1):
+                if hd >= tl.val:
+                    yield Node(hd, tl)
+
+
+def strong_decompose_2(n, partitions, cache={}):
+    args = (n, partitions)
+    if args not in cache:
+        cache[args] = tuple(strong_decompose_2_helper(*args))
+    return cache[args]
+
+
+def strong_decompose_2_helper(n, partitions):
+    if partitions == 1:
+        yield Node(n)
+    else:
+        for hd in reversed(range(1, n - partitions + 2)):
+            for tl in strong_decompose_2(n - hd, partitions - 1):
                 if hd >= tl.val:
                     yield Node(hd, tl)
 
