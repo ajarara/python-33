@@ -1,9 +1,10 @@
 class Node(object):
     def __init__(self, val, link=None):
         self.val = val
-        if link is not None:
-            assert isinstance(link, Node)
-        self.link = link
+        if link is None or isinstance(link, Node):
+            self.link = link
+        else:
+            self.link = node_from_iterable(link)
 
     def __repr__(self):
         return "({} . {})".format(self.val, repr(self.link))
@@ -15,6 +16,16 @@ class Node(object):
             here = here.link
 
 
+def node_from_iterable(iterable):
+    chain = None
+    for val in reversed(iterable):
+        chain = Node(val, chain)
+    return chain
+
+
+# notice in the below we allow kwargs in the param signature but we do
+# not dispatch on them. A complete memoization implementation would,
+# as that would capture the input domain.
 def memoize(fun):
     cache = {}
 
