@@ -33,6 +33,10 @@ Further we will generate the offsets for a sign and negate them, the arguments a
 
 K = 33
 
+def zip_offsets(unsigned_offset, signs):
+    return tuple(off * sign for off, sign in zip(unsigned_offset, signs))
+
+
 CASE_ONE_UNSIGNED = []
 for i in reversed(range(K)):
     for decomp in weak_decompose(i, 2):
@@ -41,11 +45,46 @@ for i in reversed(range(K)):
 # case: (+, -, -)
 CASE_ONE_SIGNAGE = (1, -1, -1)
 CASE_ONE = tuple(
-    tuple(off * sign for off, sign in zip(unsigned, CASE_ONE_SIGNAGE))
+    zip_offsets(unsigned, CASE_ONE_SIGNAGE)
     for unsigned in CASE_ONE_UNSIGNED)
 
 # negative case: (-, +, +)
 CASE_ONE_NEG_SIGNAGE = (-1, 1, 1)
 CASE_ONE_NEG = tuple(
-    tuple(off * sign for off, sign in zip(unsigned, CASE_ONE_NEG_SIGNAGE))
+    zip_offsets(unsigned, CASE_ONE_NEG_SIGNAGE)
     for unsigned in CASE_ONE_UNSIGNED)
+
+
+CASE_TWO_UNSIGNED = []
+for i in reversed(range(K)):
+    CASE_TWO_UNSIGNED.append((i, i, 0))
+
+# case: (+, -, +)
+CASE_TWO_SIGNAGE = (1, -1, 1)
+CASE_TWO = tuple(
+    zip_offsets(unsigned, CASE_TWO_SIGNAGE)
+    for unsigned in CASE_TWO_UNSIGNED)
+
+# case: (-, +, -)
+CASE_TWO_NEG_SIGNAGE = (-1, 1, -1)
+CASE_TWO_NEG = tuple(
+    zip_offsets(unsigned, CASE_TWO_NEG_SIGNAGE)
+    for unsigned in CASE_TWO_UNSIGNED)
+
+
+# case three is the most complicated.
+# I believe the solution is to filter everything less than i, and
+# subtract i from the elements of the decomposition. but I haven't
+# worked it out on paper quite yet.
+CASE_THREE_UNSIGNED = []
+for i in range(65, 32, -1):
+    for decomp in weak_decompose(i, 2):
+        pass
+
+# case: (+, +, -)
+CASE_THREE_SIGNAGE = (1, 1, -1)
+CASE_THREE = tuple(
+    zip_offsets(unsigned, CASE_THREE_SIGNAGE)
+    for unsigned in CASE_THREE_UNSIGNED)
+
+
